@@ -1,9 +1,6 @@
 <template>
   <ion-page>
 
-    <!-- ═══════════════════════════════════════════
-         SIDEBAR MENU (ion-menu)
-    ═══════════════════════════════════════════ -->
     <ion-menu content-id="main-content" type="overlay">
       <ion-header>
         <ion-toolbar color="primary">
@@ -71,9 +68,7 @@
       </ion-content>
     </ion-menu>
 
-    <!-- ═══════════════════════════════════════════
-         MAIN CONTENT
-    ═══════════════════════════════════════════ -->
+   
     <ion-page id="main-content">
 
       <!-- Header -->
@@ -182,9 +177,6 @@
 
           </div>
 
-          <!-- ════════════════════════════
-               PAGE: ALL MOVIES
-          ════════════════════════════ -->
           <div v-else-if="currentPage === 'all'">
             <ion-searchbar v-model="searchQuery" placeholder="Search movies..." style="padding: 0 0 12px;" />
             <div v-if="filteredBySearch.length === 0" class="ion-text-center ion-padding">
@@ -212,9 +204,6 @@
             </ion-list>
           </div>
 
-          <!-- ════════════════════════════
-               PAGE: TOP RATED
-          ════════════════════════════ -->
           <div v-else-if="currentPage === 'toprated'">
             <div v-if="topMovies.length === 0" class="ion-text-center ion-padding">
               <ion-icon :icon="trophyOutline" style="font-size: 48px; color: #ccc;" />
@@ -244,9 +233,6 @@
             </ion-list>
           </div>
 
-          <!-- ════════════════════════════
-               PAGE: WATCHED
-          ════════════════════════════ -->
           <div v-else-if="currentPage === 'watched'">
             <div v-if="watchedMovies.length === 0" class="ion-text-center ion-padding">
               <ion-icon :icon="eyeOutline" style="font-size: 48px; color: #ccc;" />
@@ -268,9 +254,6 @@
             </ion-list>
           </div>
 
-          <!-- ════════════════════════════
-               PAGE: WATCHLIST
-          ════════════════════════════ -->
           <div v-else-if="currentPage === 'watchlist'">
             <div v-if="notWatchedMovies.length === 0" class="ion-text-center ion-padding">
               <ion-icon :icon="timeOutline" style="font-size: 48px; color: #ccc;" />
@@ -292,9 +275,7 @@
             </ion-list>
           </div>
 
-          <!-- ════════════════════════════
-               PAGE: ADD / EDIT MOVIE
-          ════════════════════════════ -->
+
           <div v-else-if="currentPage === 'add'">
             <ion-card>
               <ion-card-header>
@@ -382,9 +363,6 @@
       </ion-content>
     </ion-page>
 
-    <!-- ═══════════════════════════════════════════
-         MOVIE DETAIL MODAL
-    ═══════════════════════════════════════════ -->
     <ion-modal :is-open="showDetail" @did-dismiss="closeDetail">
       <ion-header>
         <ion-toolbar color="primary">
@@ -517,7 +495,6 @@ import {
   remove
 } from 'firebase/database';
 
-// ── TYPES ──────────────────────────────────────────
 interface Comment {
   id: string;
   name: string;
@@ -537,26 +514,21 @@ interface Movie {
   comments?: Record<string, Omit<Comment, 'id'>>;
 }
 
-// ── STATE ───────────────────────────────────────────
 const movies = ref<Movie[]>([]);
 const loading = ref(true);
 const currentPage = ref('home');
 const searchQuery = ref('');
 const editingId = ref<string | null>(null);
 
-// Detail modal
 const showDetail = ref(false);
 const selectedMovie = ref<Movie | null>(null);
 const movieComments = ref<Comment[]>([]);
 
-// Comment form
 const commentName = ref('');
 const commentText = ref('');
 
-// Image upload
 const imageInput = ref<HTMLInputElement | null>(null);
 
-// Add/Edit form
 const form = ref({
   title: '',
   genre: '',
@@ -567,7 +539,6 @@ const form = ref({
   imageUrl: ''
 });
 
-// ── PAGE TITLES ─────────────────────────────────────
 const pageTitles: Record<string, string> = {
   home: '🎬 MOVIERS',
   all: 'All Movies',
@@ -579,7 +550,6 @@ const pageTitles: Record<string, string> = {
 
 const pageTitle = computed(() => pageTitles[currentPage.value] || 'CineList');
 
-// ── COMPUTED ────────────────────────────────────────
 const watchedMovies = computed(() => movies.value.filter(m => m.status === 'Watched'));
 const notWatchedMovies = computed(() => movies.value.filter(m => m.status === 'Not Watched'));
 const watchedCount = computed(() => watchedMovies.value.length);
@@ -595,7 +565,6 @@ const filteredBySearch = computed(() => {
   );
 });
 
-// ── COVER STYLE ─────────────────────────────────────
 function coverStyle(movie: Movie) {
   if (movie.imageUrl) {
     return `background-image: url(${movie.imageUrl}); background-size: cover; background-position: center;`;
@@ -615,13 +584,11 @@ function coverStyle(movie: Movie) {
   return `background: ${colors[movie.genre] || 'linear-gradient(135deg, #1a1a2e, #16213e)'};`;
 }
 
-// ── NAVIGATION ───────────────────────────────────────
 async function navigate(page: string) {
   currentPage.value = page;
   await menuController.close();
 }
 
-// ── READ: Firebase real-time listener ───────────────
 onMounted(() => {
   const moviesRef = dbRef(db, 'movies');
   onValue(moviesRef, (snapshot) => {
@@ -638,7 +605,6 @@ onMounted(() => {
   });
 });
 
-// ── MOVIE DETAIL MODAL ──────────────────────────────
 function openMovieDetail(movie: Movie) {
   selectedMovie.value = movie;
   // Load comments for this movie
@@ -661,7 +627,6 @@ function closeDetail() {
   movieComments.value = [];
 }
 
-// ── IMAGE UPLOAD ────────────────────────────────────
 function triggerImageUpload() {
   imageInput.value?.click();
 }
@@ -676,7 +641,6 @@ function handleImageUpload(event: Event) {
   reader.readAsDataURL(file);
 }
 
-// ── VALIDATE ────────────────────────────────────────
 function isValid(): boolean {
   if (!form.value.title.trim()) return false;
   if (!form.value.genre) return false;
@@ -685,7 +649,6 @@ function isValid(): boolean {
   return true;
 }
 
-// ── CREATE / UPDATE ──────────────────────────────────
 async function saveMovie() {
   if (!isValid()) {
     const alert = await alertController.create({
@@ -720,7 +683,6 @@ async function saveMovie() {
   navigate('all');
 }
 
-// ── EDIT ─────────────────────────────────────────────
 function startEdit(movie: Movie) {
   closeDetail();
   editingId.value = movie.id;
@@ -742,7 +704,6 @@ function cancelEdit() {
   navigate('all');
 }
 
-// ── DELETE ───────────────────────────────────────────
 async function deleteMovie(id: string) {
   const alert = await alertController.create({
     header: 'Delete Movie',
@@ -763,7 +724,6 @@ async function deleteMovie(id: string) {
   await alert.present();
 }
 
-// ── COMMENTS ─────────────────────────────────────────
 async function submitComment() {
   if (!commentName.value.trim() || !commentText.value.trim()) {
     const alert = await alertController.create({
@@ -793,7 +753,6 @@ async function submitComment() {
   showToast('Review posted!', 'success');
 }
 
-// ── HELPERS ──────────────────────────────────────────
 function resetForm() {
   form.value = {
     title: '',
