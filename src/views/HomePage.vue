@@ -273,7 +273,7 @@
 
                 <div style="text-align: center; margin-bottom: 16px;">
                   <div
-                    :style="form.imageUrl ? `background-image: url(${form.imageUrl}); background-size: cover; background-position: center;` : 'background: #1a1a2e;'"
+                    :style="form.imageUrl ? `background-image: url(${form.imageUrl}); background-size: contain; background-repeat: no-repeat; background-position: center;` : 'background: #1a1a2e;'"
                     style="width: 120px; height: 160px; border-radius: 10px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative;"
                     @click="triggerImageUpload"
                   >
@@ -547,7 +547,7 @@ const filteredBySearch = computed(() => {
 
 function coverStyle(movie: Movie) {
   if (movie.imageUrl) {
-    return `background-image: url(${movie.imageUrl}); background-size: cover; background-position: center;`;
+    return `background-image: url(${movie.imageUrl}); background-size: contain; background-repeat: no-repeat; background-position: center;`;
   }
   const colors: Record<string, string> = {
     'Action': 'linear-gradient(135deg, #1a1a2e, #e94560)',
