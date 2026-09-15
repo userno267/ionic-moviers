@@ -46,7 +46,6 @@
 
         </ion-list>
 
-        <!-- Stats inside sidebar -->
         <div style="padding: 16px; margin-top: 8px;">
           <p style="font-size: 12px; color: gray; margin-bottom: 8px;">YOUR STATS</p>
           <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -68,10 +67,8 @@
       </ion-content>
     </ion-menu>
 
-   
     <ion-page id="main-content">
 
-      <!-- Header -->
       <ion-header>
         <ion-toolbar color="primary">
           <ion-buttons slot="start">
@@ -88,7 +85,6 @@
 
       <ion-content class="ion-padding">
 
-        <!-- ─── LOADING ─── -->
         <div v-if="loading" class="ion-text-center ion-padding">
           <ion-spinner name="crescent" />
           <p>Loading...</p>
@@ -96,12 +92,8 @@
 
         <div v-else>
 
-          <!-- ════════════════════════════
-               PAGE: HOME
-          ════════════════════════════ -->
           <div v-if="currentPage === 'home'">
 
-            <!-- Stats cards -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
               <ion-card style="margin: 0; text-align: center;">
                 <ion-card-content style="padding: 12px;">
@@ -123,7 +115,6 @@
               </ion-card>
             </div>
 
-            <!-- Recently added -->
             <p style="font-weight: 600; margin-bottom: 10px;">Recently Added</p>
             <div v-if="recentMovies.length === 0" style="color: gray; font-size: 13px; margin-bottom: 20px;">No movies yet. Add one!</div>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
@@ -133,7 +124,6 @@
                 style="margin: 0; cursor: pointer;"
                 @click="openMovieDetail(movie)"
               >
-                <!-- Cover image or placeholder -->
                 <div :style="coverStyle(movie)" style="height: 100px; display: flex; align-items: center; justify-content: center; position: relative;">
                   <ion-icon v-if="!movie.imageUrl" :icon="filmOutline" style="font-size: 36px; color: rgba(255,255,255,0.4);" />
                   <div style="position: absolute; top: 6px; right: 6px;">
@@ -152,7 +142,6 @@
               </ion-card>
             </div>
 
-            <!-- Top rated preview -->
             <p style="font-weight: 600; margin-bottom: 10px;">Top Rated</p>
             <div v-if="topMovies.length === 0" style="color: gray; font-size: 13px;">No movies yet.</div>
             <ion-list v-else style="border-radius: 12px; overflow: hidden;">
@@ -275,7 +264,6 @@
             </ion-list>
           </div>
 
-
           <div v-else-if="currentPage === 'add'">
             <ion-card>
               <ion-card-header>
@@ -283,7 +271,6 @@
               </ion-card-header>
               <ion-card-content>
 
-                <!-- Cover image upload -->
                 <div style="text-align: center; margin-bottom: 16px;">
                   <div
                     :style="form.imageUrl ? `background-image: url(${form.imageUrl}); background-size: cover; background-position: center;` : 'background: #1a1a2e;'"
@@ -377,7 +364,6 @@
 
       <ion-content v-if="selectedMovie">
 
-        <!-- Cover image -->
         <div
           :style="coverStyle(selectedMovie)"
           style="height: 200px; display: flex; align-items: flex-end; padding: 16px; position: relative;"
@@ -395,11 +381,9 @@
 
         <div class="ion-padding">
 
-          <!-- Movie info -->
           <h2 style="font-size: 22px; font-weight: 700; margin: 0 0 4px;">{{ selectedMovie.title }}</h2>
           <p style="color: gray; margin: 0 0 12px;">{{ selectedMovie.year }} · ⭐ {{ selectedMovie.rating }}/10</p>
 
-          <!-- Action buttons -->
           <div style="display: flex; gap: 8px; margin-bottom: 20px;">
             <ion-button fill="outline" size="small" @click="startEdit(selectedMovie)">
               <ion-icon :icon="createOutline" slot="start" />
@@ -411,18 +395,15 @@
             </ion-button>
           </div>
 
-          <!-- Owner review -->
           <div v-if="selectedMovie.review" style="background: var(--ion-color-light); border-radius: 10px; padding: 12px; margin-bottom: 20px;">
             <p style="font-size: 12px; font-weight: 600; color: gray; margin: 0 0 4px;">📝 OWNER REVIEW</p>
             <p style="font-size: 14px; margin: 0;">{{ selectedMovie.review }}</p>
           </div>
 
-          <!-- ── COMMENTS SECTION ── -->
           <p style="font-weight: 600; font-size: 16px; margin-bottom: 12px;">
             💬 Community Reviews ({{ movieComments.length }})
           </p>
 
-          <!-- Existing comments -->
           <div v-if="movieComments.length === 0" style="color: gray; font-size: 13px; margin-bottom: 16px;">
             No reviews yet. Be the first to leave one!
           </div>
@@ -440,7 +421,6 @@
             </div>
           </div>
 
-          <!-- Add comment form -->
           <ion-card>
             <ion-card-header>
               <ion-card-title style="font-size: 15px;">Leave a Review</ion-card-title>
@@ -607,7 +587,6 @@ onMounted(() => {
 
 function openMovieDetail(movie: Movie) {
   selectedMovie.value = movie;
-  // Load comments for this movie
   if (movie.comments) {
     movieComments.value = Object.entries(movie.comments).map(([id, c]: [string, any]) => ({
       id,
@@ -745,7 +724,6 @@ async function submitComment() {
 
   await push(dbRef(db, `movies/${selectedMovie.value.id}/comments`), comment);
 
-  // Add to local list immediately so user sees it right away
   movieComments.value.push({ id: Date.now().toString(), ...comment });
 
   commentName.value = '';
